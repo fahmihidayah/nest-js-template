@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String      @id @default(uuid())
+  firstName               String    @map("first_name")
+  lastName               String?     @map("last_name") @default("")
+  email                   String   @unique
+  isEmailVerified       Boolean  @default(false) @map("is_email_verified")
+  emailVerificationCode String   @default("") @map("email_verification_code")
+  isAdmin                Boolean  @default(false) @map("is_admin")
+  password                String
+  userToken              UserToken? 
+  roles                   Role[]
+  permissions             Permission[]
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+   @@map("users")
+}
+
+model UserToken {
+  id              String     @id @default(uuid())
+  user            User    @relation(fields : [user_id], references : [id])
+  user_id         String     @unique
+  token           String   
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+  @@map("user_tokens")
+}
+
+
+model Role {
+  id                String      @id @default(uuid())
+  name              String  
+  users             User[]
+  permissions       Permission[]
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+  @@map("roles")
+}
+
+model Permission {
+  id            String      @id @default(uuid())
+  codeName     String    @unique @map("code_name")
+  name          String    
+  users         User[]
+  role          Role      @relation(fields : [role_id], references : [id], onDelete: Cascade)
+  role_id       String
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+    @@map("permissions")
+}
