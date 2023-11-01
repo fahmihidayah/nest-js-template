@@ -10,7 +10,7 @@ import { DatabaseModule } from './db/db.module';
   imports: [
     DatabaseModule.forRoot(),
     ConfigModule.forRoot({
-      envFilePath: '.env.development.local',
+      envFilePath: '../.env.development.local',
     }),
     UsersModule, 
     AuthModule, 

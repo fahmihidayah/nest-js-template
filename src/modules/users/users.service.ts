@@ -3,8 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Prisma, PrismaClient, Role, User } from '@prisma/client';
 import * as bcrypt from "bcrypt";
+import {v4 as uuid4} from "uuid";
 import { UserWithRoles } from './entities/user.entity';
-import prisma from 'src/db';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +18,7 @@ export class UsersService {
   async createWithRole(createUserDto : CreateUserDto, role : Role) {
     return await this._userDelegate.create({
       data : {
+        id : uuid4(),
         firstName : createUserDto.firstName,
         lastName : createUserDto.lastName,
         email : createUserDto.email,
@@ -62,12 +63,21 @@ export class UsersService {
     })
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return await this._userDelegate.update({
+      where : {
+        id : id
+      },
+      data : updateUserDto
+    })
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return await this._userDelegate.delete({
+      where : {
+        id : id
+      }
+    })
   }
 
   async findByEmail(email : string) : Promise<UserWithRoles> {

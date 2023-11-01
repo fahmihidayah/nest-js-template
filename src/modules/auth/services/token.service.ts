@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, PrismaClient, User, UserToken } from "@prisma/client";
-import prisma from "src/db";
 import { UserWithRoles } from "src/modules/users/entities/user.entity";
 
 @Injectable()

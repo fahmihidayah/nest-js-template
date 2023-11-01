@@ -1,32 +1,97 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users.service';
-import { Context, MockContext, createMockContext } from 'src/db/test-mock';
+import { prismaMock } from '../../../db/singleton';
+import prisma from "../../../db/client";
 import { Prisma, PrismaClient } from '@prisma/client';
 
-let mockCtx: MockContext
-let ctx: Context
 
 describe('UsersService', () => {
-  let service: UsersService;
+  let userService: UsersService;
 
   beforeEach(async () => {
-
-    mockCtx = createMockContext()
-    ctx = mockCtx as unknown as Context
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, {
-        provide : PrismaClient,
-        useValue : ctx.prisma
-      }],
-    }).overrideProvider(UsersService).useValue({}).
-      compile();
-
-    service = module.get<UsersService>(UsersService);
+    userService = new UsersService(prisma)
   });
 
-  it('should be defined', () => {
+  afterEach(async () => {
+    await prisma.user.deleteMany();
+  })
 
-    expect(service).toBeDefined();
-  });
+  it('create user success', async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+    expect(user.email).toEqual("test@mock.com")
+  })
+
+  it('find all user result 1 success', async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+
+    const users = await userService.findAll();
+
+    expect(users.length).toEqual(1)
+  })
+
+  it('find user by email result 1 success', async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+
+    const emailUser = await userService.findByEmail(user.email);
+
+    expect(emailUser.email).toEqual("test@mock.com")
+  })
+
+  it("find user by id result 1 success", async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+
+    const userWithId = await userService.findOne(user.id);
+
+    expect(userWithId.id).not.toBeNull()
+  })
+
+  it("update user result success", async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+
+    const updatedUser = await userService.update(user.id, {
+      firstName : "test success"
+    })
+
+    expect(updatedUser.firstName).toEqual("test success");
+  })
+
+  it('delete user result success', async () => {
+    const user = await userService.create({
+      email: "test@mock.com",
+      firstName: "Test Mock",
+      lastName: "Mock",
+      password: "Test1234!"
+    })
+
+    const userDeleted = await userService.remove(user.id)
+
+    const countUser = await userService.findAll();
+
+    expect(countUser.length).toEqual(0);
+  })
 });

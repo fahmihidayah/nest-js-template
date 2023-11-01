@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient, Role } from '@prisma/client';
-import prisma from 'src/db';
 import { RoleFormDto } from './dto/role.dto';
+import {v4 as uuid4} from "uuid";
 
 @Injectable()
 export class RolesService {
@@ -26,7 +26,7 @@ export class RolesService {
             return role;
         }
         return await this._roleDelegate.create({
-            data : roleFormDto
+            data : {...roleFormDto}
         })
     }
 
