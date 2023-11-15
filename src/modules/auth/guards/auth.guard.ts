@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../../users/services/users.service';
 import { SECRET_KEY } from 'src/config';
-import { getAuth } from './utils/token.utils';
+import { getAuth } from '../utils/token.utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

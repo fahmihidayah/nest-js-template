@@ -13,6 +13,11 @@ export class UserWithTokenSerializer extends UserSerializer {
     public token : TokenSerializer;
 }
 
+export class UserWithSimpleTokenSerializer extends UserSerializer {
+    public accessToken : string;
+    
+}
+
 export function getUserWithTokenSerializer(user : UserWithRoles, token : TokenSerializer) : UserWithTokenSerializer {
     return {
         ... getUserSerializer(user),

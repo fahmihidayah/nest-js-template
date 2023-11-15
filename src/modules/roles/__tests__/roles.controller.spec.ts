@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RolesController } from '../roles.controller';
-import { RolesService } from '../roles.service';
+import { RolesController } from '../controllers/roles.controller';
+import { RolesService } from '../services/roles.service';
 
 describe('RolesController', () => {
   let controller: RolesController;
@@ -11,11 +11,11 @@ describe('RolesController', () => {
     //   providers: [RolesService],
     // }).compile();
 
-    // controller = module.get<RolesController>(RolesController);
+    // controllers = module.get<RolesController>(RolesController);
   });
 
   it('should be defined', () => {
     expect(1).toBe(1);
-    // expect(controller).toBeDefined();
+    // expect(controllers).toBeDefined();
   });
 });

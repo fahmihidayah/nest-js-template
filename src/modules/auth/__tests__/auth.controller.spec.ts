@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '../auth.controller';
+import { AuthController } from '../controllers/auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -9,11 +9,11 @@ describe('AuthController', () => {
     //   controllers: [AuthController],
     // }).compile();
 
-    // controller = module.get<AuthController>(AuthController);
+    // controllers = module.get<AuthController>(AuthController);
   });
 
   it('should be defined', () => {
     expect(1).toBe(1);
-    // expect(controller).toBeDefined();
+    // expect(controllers).toBeDefined();
   });
 });

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient, Role } from '@prisma/client';
-import { RoleFormDto } from './dto/role.dto';
+import { RoleFormDto } from '../dto/role.dto';
 import {v4 as uuid4} from "uuid";
 
 @Injectable()

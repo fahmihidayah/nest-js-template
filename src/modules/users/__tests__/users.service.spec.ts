@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users.service';
+import { UsersService } from '../services/users.service';
 import { prismaMock } from '../../../db/singleton';
 import prisma from "../../../db/client";
 import { Prisma, PrismaClient } from '@prisma/client';
