@@ -15,6 +15,7 @@ import { getUserSerializer } from 'src/modules/users/entities/user.serializer';
 import { RolesService } from 'src/modules/roles/services/roles.service';
 import { ROLE_USER } from 'src/modules/roles/dto/role.dto';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from '../constants';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
     private _jwtService : JwtService
   ) {}
 
-  async signUp(authFormDto : AuthFormDto) : Promise<UserWithSimpleTokenSerializer> {
+  async signUp(authFormDto : AuthFormDto) : Promise<UserWithTokenSerializer> {
     const user = await this._usersService.findByEmail(authFormDto.email);
     if (!user) {
       throw new HttpException(
@@ -41,10 +42,21 @@ export class AuthService {
     if (!isPasswordMatching)
       throw new HttpException('Password is not match', 409);
 
-    const token = await this._jwtService.signAsync({sub : user.id, email : user.email})
+    const accessToken = await this._jwtService.signAsync({sub : user.id, email : user.email})
+    const refreshToken = await this._jwtService.signAsync({sub : user.id, email : user.email})
+    const userToken = await this.tokenService.findByUser(user);
+    if (userToken === null) {
+      await this.tokenService.create(user, refreshToken);
+    } else {
+      await this.tokenService.update(user, refreshToken);
+    }
     return {
       ... getUserSerializer(user), 
-      accessToken : token
+      token : {
+        accessToken : accessToken,
+        refreshToken : refreshToken,
+        expireIn :  30 * 24 * 60 * 60
+      }
     }
   }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Prisma, PrismaClient, Role } from '@prisma/client';
+// import * as argon2 from 'argon2';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid4 } from 'uuid';
 import { UserWithRoles } from '../entities/user.entity';

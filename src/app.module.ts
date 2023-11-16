@@ -6,15 +6,16 @@ import { ConfigModule } from '@nestjs/config';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { DatabaseModule } from './db/db.module';
 import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './modules/auth/constants';
 
 @Module({
   imports: [
     DatabaseModule.forRoot(),
     JwtModule.register({
       global : true,
-      secret : "test-123-test-123",
+      secret : jwtConstants.secret,
       signOptions: {
-        expiresIn : "60s"
+        expiresIn : "3600s"
       }
     }),
     ConfigModule.forRoot({

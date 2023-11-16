@@ -5,7 +5,7 @@ import { SECRET_KEY } from 'src/config';
 import { getAuth } from '../utils/token.utils';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthOldGuard implements CanActivate {
 
   constructor(
     private readonly userService : UsersService

@@ -13,9 +13,10 @@ import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { getUserSerializer } from '../entities/user.serializer';
-import { AuthGuard } from '../../auth/guards/auth.guard';
+import { AuthOldGuard } from '../../auth/guards/auth.guard';
 import { RoleGuard } from '../../roles/guards/role.guard';
 import { ROLE_ADMIN, ROLE_USER } from '../../roles/dto/role.dto';
+import { AccessTokenGuard } from 'src/modules/auth/guards/accessToken.guard';
 
 @Controller('users')
 export class UsersController {
@@ -27,15 +28,15 @@ export class UsersController {
   }
 
   @Get('admin')
-  @UseGuards(AuthGuard, new RoleGuard(ROLE_ADMIN))
+  @UseGuards(AccessTokenGuard, new RoleGuard(ROLE_ADMIN))
   async admin(@Request() request) {
-    return getUserSerializer(request['user']);
+    return getUserSerializer(request.user);
   }
 
   @Get('profile')
-  @UseGuards(AuthGuard, new RoleGuard(ROLE_USER))
+  @UseGuards(AccessTokenGuard, new RoleGuard(ROLE_USER))
   async profile(@Request() request) {
-    return getUserSerializer(request['user']);
+    return getUserSerializer(request.user);
   }
 
   @Get()
@@ -44,7 +45,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard, new RoleGuard(ROLE_ADMIN))
+  @UseGuards(AuthOldGuard, new RoleGuard(ROLE_ADMIN))
   async findOne(@Param('id') id: string) {
     return getUserSerializer(await this.usersService.findOne(id));
   }
