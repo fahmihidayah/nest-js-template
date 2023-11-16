@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { Prisma, PrismaClient, Role } from '@prisma/client';
+import { Prisma, PrismaClient, Role, User } from '@prisma/client';
 // import * as argon2 from 'argon2';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid4 } from 'uuid';
 import { UserWithRoles } from '../entities/user.entity';
+import { CreateService, RetrieveService } from 'src/base/service';
+import { Query } from 'src/utils/request';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements RetrieveService<UserWithRoles, string> {
   private _userDelegate: Prisma.UserDelegate;
 
   constructor(prisma: PrismaClient) {
@@ -41,6 +43,9 @@ export class UsersService {
         email: createUserDto.email,
         password: await bcrypt.hash(createUserDto.password, 10),
       },
+      include: {
+        roles : true
+      }
     });
   }
 
@@ -52,7 +57,19 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string) {
+  async findByQuery(query: Query): Promise<UserWithRoles[]> {
+    return await this._userDelegate.findMany({
+      where : {
+
+      },
+      include : {
+        roles : true
+      }
+    })
+      
+  }
+
+  async findOne(id: string) : Promise<UserWithRoles> {
     return await this._userDelegate.findUnique({
       where: {
         id: id,
@@ -69,6 +86,9 @@ export class UsersService {
         id: id,
       },
       data: updateUserDto,
+      include : {
+        roles : true
+      }
     });
   }
 
@@ -77,6 +97,9 @@ export class UsersService {
       where: {
         id: id,
       },
+      include : {
+        roles : true
+      }
     });
   }
 
