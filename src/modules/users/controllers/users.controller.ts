@@ -18,6 +18,8 @@ import { RoleGuard } from '../../roles/guards/role.guard';
 import { ROLE_ADMIN, ROLE_USER } from '../../roles/dto/role.dto';
 import { AccessTokenGuard } from 'src/modules/auth/guards/accessToken.guard';
 import { formatResponse } from 'src/utils/response';
+import * as express from 'express';
+import { getQuery } from 'src/utils/request';
 
 @Controller('users')
 export class UsersController {
@@ -51,15 +53,21 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(@Request() request : express.Request) {
+    const paginageList = await this.usersService.findByQuery(
+      getQuery(request)
+    )
+    
     return formatResponse({
       message : "Success Retrieve",
-      data : (await this.usersService.findAll()).map((e) => getUserSerializer(e))
+      data : {
+        ... paginageList, data : paginageList.data.map((e) => getUserSerializer(e))
+      },
+      extractData : true
     })
   }
 
   @Get(':id')
-  @UseGuards(AuthOldGuard, new RoleGuard(ROLE_ADMIN))
   async findOne(@Param('id') id: string) {
     return formatResponse({
       message : "Success Retrieve",
