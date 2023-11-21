@@ -1,0 +1,20 @@
+FROM node:21-alpine AS development
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm i -g prisma
+
+RUN npm install glob rimraf
+
+RUN npm install --only=development
+
+COPY . .
+
+RUN npm i -g dotenv-cli
+
+RUN chmod +x entrypoint-dev.sh
+
+# RUN npm run build
+CMD ["./entrypoint-dev.sh"]

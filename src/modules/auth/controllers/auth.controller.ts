@@ -7,29 +7,45 @@ import { RefreshTokenGuard } from '../guards/refreshToken.guard';
 import { AccessTokenGuard } from '../guards/accessToken.guard';
 import { getUserWithTokenSerializer } from '../entities/user.serializer';
 import { getUserSerializer } from 'src/modules/users/entities/user.serializer';
+import { formatResponse } from 'src/utils/response';
 
 @Controller('auth')
 export class AuthController {
   constructor(public _authService: AuthService) {}
 
-  @Post('login')
-  async login(@Body() authFormDto: AuthFormDto) {
-    return this._authService.login(authFormDto);
-  }
-
   @Post('sign-in')
   async signUp(@Body() authFormDto: AuthFormDto) {
-    return await this._authService.signUp(authFormDto)
+    const response = await this._authService.signUp(authFormDto)
+    return formatResponse({
+      message : "Success Login",
+      data : response
+    })
+  }
+
+  @Post("refresh-token")
+  async refreshToken() {
+    const token = await this._authService.refreshToken();
+    return formatResponse({
+      message : "Success refresh token",
+      data : token
+    })
   }
 
   @UseGuards(AccessTokenGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return getUserSerializer(req.user)
+  async getProfile(@Request() req) {
+    return formatResponse({
+      message : "Success Login",
+      data : getUserSerializer(req.user)
+    })
   }
 
   @Post('register')
   async register(@Body() registerFormDto: RegisterFormDto) {
-    return await this._authService.register(registerFormDto, ROLE_USER);
+    const response = await this._authService.register(registerFormDto, ROLE_USER);
+    return formatResponse({
+      message : "Success Login",
+      data : response
+    })
   }
 }

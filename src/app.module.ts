@@ -15,7 +15,7 @@ import { jwtConstants } from './modules/auth/constants';
       global : true,
       secret : jwtConstants.secret,
       signOptions: {
-        expiresIn : "3600s"
+        expiresIn : "60s"
       }
     }),
     ConfigModule.forRoot({

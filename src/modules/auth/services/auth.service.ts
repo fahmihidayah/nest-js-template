@@ -60,35 +60,8 @@ export class AuthService {
     }
   }
 
-  async login(authFormDto: AuthFormDto): Promise<UserWithTokenSerializer> {
-    const user = await this._usersService.findByEmail(authFormDto.email);
-    if (!user) {
-      throw new HttpException(
-        `User with email ${authFormDto.email} not found`,
-        409,
-      );
-    }
-
-    const isPasswordMatching: boolean = await compare(
-      authFormDto.password,
-      user.password,
-    );
-    if (!isPasswordMatching)
-      throw new HttpException('Password is not match', 409);
-
-    const tokenData = await createToken(user);
-    // const cookie = this.createCookie(tokenData);
-    // const tokenData = {
-    //   accessToken : await this._jwtService.signAsync({ sub : user.id, email : user.email})
-    //   refreshToken : await
-    // }
-    const userToken = await this.tokenService.findByUser(user);
-    if (userToken === null) {
-      await this.tokenService.create(user, tokenData.refreshToken);
-    } else {
-      await this.tokenService.update(user, tokenData.refreshToken);
-    }
-    return getUserWithTokenSerializer(user, tokenData);
+  async refreshToken() {
+    
   }
 
   async register(
