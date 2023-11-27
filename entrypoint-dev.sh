@@ -1,7 +1,5 @@
 #!/bin/sh
-
-prisma generate --schema=prisma/schema.prisma 
-
+npm run prisma:generate
+npm run prisma:migrate
 npm run start:dev
-
 exec "$@"

@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+
+    web:
+      container_name: nest-starter-app
+      image: nest-starter
+      # build:
+      #   context: .
+      #   target: development
+      #   dockerfile: ./Dockerfile.dev
+      ports:
+        - 3000:3000
+      env_file:
+        - .env.development.local
+      # volumes:
+      #   - .:/usr/src/app
+      restart: unless-stopped
+      entrypoint: /usr/src/app/entrypoint-dev.sh
+      depends_on:
+        - db
+      networks:
+        - nesjs-network
     db:
       image: mysql
       command: --default-authentication-plugin=mysql_native_password
@@ -11,28 +31,14 @@ services:
         - 3306:3306
       environment:
         - MYSQL_ROOT_PASSWORD=root
-
-
-    # dev:
-    #     container_name: nestjs_api_dev
-    #     image: nestjs-api-dev:1.0.0
-    #     build:
-    #         context: .
-    #         target: development
-    #         dockerfile: ./Dockerfile
-    #     command: npm run start:debug
-    #     ports:
-    #         - 3000:3000
-    #         - 9229:9229
-    #     networks:
-    #         - nesjs-network
-    #     volumes:
-    #         - .:/usr/src/app
-    #         - /usr/src/app/node_modules
-    #     restart: unless-stopped
+      networks:
+        - nesjs-network
 
 # networks:
 #     nesjs-network:
 
 volumes:
   mysql-volume:
+
+networks:
+  nesjs-network:

@@ -1,20 +1,21 @@
-FROM node:21-alpine AS development
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
+FROM node:21-alpine 
 
+# Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 
-RUN npm i -g prisma
+COPY --chown=node:node . .
 
-RUN npm install glob rimraf
+RUN npm install && npm install -g dotenv-cli && npm install -g prisma
 
-RUN npm install --only=development
+RUN npm install 
 
-COPY . .
+ENV NODE_ENV development
 
-RUN npm i -g dotenv-cli
+RUN ["chmod", "+x", "entrypoint-dev.sh"]
 
-RUN chmod +x entrypoint-dev.sh
-
-# RUN npm run build
-CMD ["./entrypoint-dev.sh"]
+CMD ["entrypoint-dev.sh"]
