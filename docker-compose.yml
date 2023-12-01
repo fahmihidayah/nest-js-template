@@ -13,8 +13,6 @@ services:
         - 3000:3000
       env_file:
         - .env.development.local
-      # volumes:
-      #   - .:/usr/src/app
       restart: unless-stopped
       entrypoint: /usr/src/app/entrypoint-dev.sh
       depends_on:

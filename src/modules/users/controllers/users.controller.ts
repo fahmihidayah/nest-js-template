@@ -54,6 +54,8 @@ export class UsersController {
 
   @Get()
   async findAll(@Request() request : express.Request) {
+    const query = request.query;
+    console.log(query);
     const paginageList = await this.usersService.findByQuery(
       getQuery(request)
     )
