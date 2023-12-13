@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, PrismaClient, User, UserToken } from "@prisma/client";
 import { UserWithRoles } from "src/modules/users/entities/user.entity";
+import { TokenWithUser } from "../entities/token.entity";
 
 @Injectable()
 export class TokenService { 
@@ -11,6 +12,17 @@ export class TokenService {
         prisma : PrismaClient
     ) {
         this._userToken = prisma.userToken
+    }
+
+    async findByToken(token : string) : Promise<TokenWithUser> {    
+        return await this._userToken.findFirst({
+            where : {
+                token : token
+            },
+            include : {
+                user : true
+            }
+        })
     }
 
     async findByUser(user : User) : Promise<UserToken> {

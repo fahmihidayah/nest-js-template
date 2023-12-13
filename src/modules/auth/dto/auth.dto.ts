@@ -1,9 +1,14 @@
-import { IsEmail, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 export class AuthFormDto {
   @IsEmail()
-  public email: string;
+  @IsNotEmpty()
+  @IsDefined()
+  public email?: string;
 
   @MinLength(6)
-  public password: string;
+  @IsDefined()
+  public password?: string;
 }
+
+

@@ -16,6 +16,7 @@ import { RolesService } from 'src/modules/roles/services/roles.service';
 import { ROLE_USER } from 'src/modules/roles/dto/role.dto';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../constants';
+import { RefreshTokenDto } from '../dto/token.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,7 +44,7 @@ export class AuthService {
       throw new HttpException('Password is not match', 409);
 
     const accessToken = await this._jwtService.signAsync({sub : user.id, email : user.email})
-    const refreshToken = await this._jwtService.signAsync({sub : user.id, email : user.email})
+    const refreshToken = await this._jwtService.signAsync({sub : user.id, email : user.email}, {secret : jwtConstants.secret, expiresIn : '30d'})
     const userToken = await this.tokenService.findByUser(user);
     if (userToken === null) {
       await this.tokenService.create(user, refreshToken);
@@ -60,8 +61,10 @@ export class AuthService {
     }
   }
 
-  async refreshToken() {
-    
+  async refreshToken(refreshTokenDto : RefreshTokenDto) : Promise<string> {
+    const tokenWithUser = await this.tokenService.findByToken(refreshTokenDto.refreshToken);
+    const accessToken = await this._jwtService.signAsync({sub : tokenWithUser.user.id, email : tokenWithUser.user.email})
+    return accessToken;
   }
 
   async register(
