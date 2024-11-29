@@ -6,56 +6,47 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id                      String      @id @default(uuid())
-  firstName               String    @map("first_name")
-  lastName               String?     @map("last_name") @default("")
-  email                   String   @unique
-  isEmailVerified       Boolean  @default(false) @map("is_email_verified")
-  emailVerificationCode String   @default("") @map("email_verification_code")
-  isAdmin                Boolean  @default(false) @map("is_admin")
+  id                      String         @id @default(uuid())
+  firstName               String         @map("first_name")
+  lastName                String?        @map("last_name") @default("")
+  email                   String         @unique
+  isEmailVerified         Boolean        @default(false) @map("is_email_verified")
+  emailVerificationCode   String         @default("") @map("email_verification_code")
+  isAdmin                 Boolean        @default(false) @map("is_admin")
   password                String
-  userToken              UserToken? 
   roles                   Role[]
   permissions             Permission[]
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
-   @@map("users")
-}
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
 
-model UserToken {
-  id              Int     @id @default(autoincrement())
-  user            User    @relation(fields : [user_id], references : [id])
-  user_id         String     @unique
-  token           String    @db.Text
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
-  @@map("user_tokens")
+  @@map("users")
 }
-
 
 model Role {
-  id                Int      @id @default(autoincrement())
-  name              String  
-  users             User[]
-  permissions       Permission[]
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
+  id                      Int            @id @default(autoincrement())
+  name                    String
+  users                   User[]
+  permissions             Permission[]
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
+
   @@map("roles")
 }
 
 model Permission {
-  id            Int      @id @default(autoincrement())
-  codeName     String    @unique @map("code_name")
-  name          String    
-  users         User[]
-  role          Role      @relation(fields : [role_id], references : [id], onDelete: Cascade)
-  role_id       Int
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
-    @@map("permissions")
+  id                      Int            @id @default(autoincrement())
+  codeName                String         @unique @map("code_name")
+  name                    String
+  users                   User[]
+  role                    Role           @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id                 Int
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
+
+  @@map("permissions")
 }

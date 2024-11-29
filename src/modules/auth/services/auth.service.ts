@@ -3,14 +3,9 @@ import { UsersService } from 'src/modules/users/services/users.service';
 import { AuthFormDto } from '../dto/auth.dto';
 import { RegisterFormDto } from '../dto/register.dto';
 import { compare, hash } from 'bcrypt';
-import { createToken } from '../utils/token.utils';
-import { TokenService } from './token.service';
 import {
-  UserWithSimpleTokenSerializer,
   UserWithTokenSerializer,
-  getUserWithTokenSerializer,
 } from '../entities/user.serializer';
-import { UserWithRoles } from 'src/modules/users/entities/user.entity';
 import { getUserSerializer } from 'src/modules/users/entities/user.serializer';
 import { RolesService } from 'src/modules/roles/services/roles.service';
 import { ROLE_USER } from 'src/modules/roles/dto/role.dto';
@@ -22,7 +17,6 @@ import { RefreshTokenDto } from '../dto/token.dto';
 export class AuthService {
   constructor(
     private _usersService: UsersService,
-    private tokenService: TokenService,
     private rolesService: RolesService,
     private _jwtService : JwtService
   ) {}
@@ -45,12 +39,7 @@ export class AuthService {
 
     const accessToken = await this._jwtService.signAsync({sub : user.id, email : user.email})
     const refreshToken = await this._jwtService.signAsync({sub : user.id, email : user.email}, {secret : jwtConstants.secret, expiresIn : '30d'})
-    const userToken = await this.tokenService.findByUser(user);
-    if (userToken === null) {
-      await this.tokenService.create(user, refreshToken);
-    } else {
-      await this.tokenService.update(user, refreshToken);
-    }
+   
     return {
       ... getUserSerializer(user), 
       token : {
@@ -62,7 +51,7 @@ export class AuthService {
   }
 
   async refreshToken(refreshTokenDto : RefreshTokenDto) : Promise<string> {
-    const tokenWithUser = await this.tokenService.findByToken(refreshTokenDto.refreshToken);
+    const tokenWithUser = await this._jwtService.verifyAsync(refreshTokenDto.refreshToken)
     const accessToken = await this._jwtService.signAsync({sub : tokenWithUser.user.id, email : tokenWithUser.user.email})
     return accessToken;
   }
