@@ -1,26 +1,29 @@
-import { UserSerializer, getUserSerializer } from "src/modules/users/entities/user.serializer";
+import {
+	UserSerializer,
+	getUserSerializer,
+} from "src/modules/users/entities/user.serializer";
 import { UserWithRoles } from "src/modules/users/entities/user.entity";
 
 export interface TokenSerializer {
-    expireIn : number;
-    accessToken : string;
-    refreshToken : string;
+	expireIn: number;
+	accessToken: string;
+	refreshToken: string;
 }
 
-
 export class UserWithTokenSerializer extends UserSerializer {
-    
-    public token : TokenSerializer;
+	public token: TokenSerializer;
 }
 
 export class UserWithSimpleTokenSerializer extends UserSerializer {
-    public accessToken : string;
-    
+	public accessToken: string;
 }
 
-export function getUserWithTokenSerializer(user : UserWithRoles, token : TokenSerializer) : UserWithTokenSerializer {
-    return {
-        ... getUserSerializer(user),
-        token : token,
-    }
+export function getUserWithTokenSerializer(
+	user: UserWithRoles,
+	token: TokenSerializer,
+): UserWithTokenSerializer {
+	return {
+		...getUserSerializer(user),
+		token: token,
+	};
 }

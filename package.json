@@ -1,23 +1,25 @@
 {
   "name": "nest-template",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.0.0",
+  "description": "A robust and scalable NestJS template application",
+  "author": "Your Name <your.email@example.com>",
   "private": true,
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-repo/nest-template.git"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "start": "nest start",
     "start:dev": "dotenv -e .env.development.local nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "prisma:init": "dotenv -e .env.development.local prisma init",
     "prisma:migrate": "dotenv -e .env.development.local prisma migrate dev --preview-feature",
-    "prisma:migrate:test": "dotenv -e .env.test.local prisma migrate dev --preview-feature",
     "prisma:generate": "dotenv -e .env.development.local prisma generate",
-    "prisma:generate:test": "dotenv -e .env.test.local prisma generate",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "dotenv -e .env.test.local jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -28,8 +30,8 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
-    "@nestjs/jwt": "10.2.0",
-    "@nestjs/mapped-types": "*",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/mapped-types": "^1.0.0",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.0.0",
@@ -38,7 +40,6 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "dotenv": "^16.3.1",
-    "jest-mock-extended": "3.0.5",
     "jsonwebtoken": "^9.0.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
@@ -47,19 +48,18 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
-    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.3",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.3.1",
-    "@types/passport": "1.0.15",
+    "@types/passport": "^1.0.15",
     "@types/passport-jwt": "^3.0.13",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^2.0.12",
-    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.42.0",
@@ -78,19 +78,13 @@
     "uuid": "^9.0.0"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
+    "collectCoverageFrom": ["**/*.(t|j)s"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
