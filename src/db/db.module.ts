@@ -10,8 +10,10 @@ export class DatabaseModule {
 		return {
 			global: true,
 			module: DatabaseModule,
+
 			providers: [
 				{
+					
 					provide: PrismaClient,
 					useValue: prisma,
 				},

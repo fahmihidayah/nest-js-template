@@ -1,5 +1,4 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { UsersService } from "src/modules/users/services/users.service";
 import { AuthFormDto } from "../dto/auth.dto";
 import { RegisterFormDto } from "../dto/register.dto";
 import { compare, hash } from "bcrypt";
@@ -10,11 +9,13 @@ import { ROLE_USER } from "src/modules/roles/dto/role.dto";
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "../constants";
 import { RefreshTokenDto } from "../dto/token.dto";
+import { UserService } from "../../../modules/users/services/user.service";
+import { v4 as uuid4 } from "uuid";
 
 @Injectable()
 export class AuthService {
 	constructor(
-		private _usersService: UsersService,
+		private _usersService: UserService,
 		private rolesService: RolesService,
 		private _jwtService: JwtService,
 	) {}
@@ -79,10 +80,28 @@ export class AuthService {
 
 		const role = await this.rolesService.findAndCreate({ name: roleName });
 
-		const newUser = await this._usersService.createWithRole(
-			registerFormDto,
-			role,
-		);
+		// const newUser = await this._usersService.createWithRole(
+		// 	registerFormDto,
+		// 	role,
+		// );
+
+		const newUser = await this._usersService.create({
+			data: {
+				id: uuid4(),
+				firstName: registerFormDto.firstName,
+				lastName: registerFormDto.lastName,
+				email: registerFormDto.email,
+				password: await hash(registerFormDto.password, 10),
+				roles: {
+					connect: {
+						id: role.id,
+					},
+				},},
+				include: {
+					roles: true,
+				}
+			
+		});
 
 		return getUserSerializer(newUser);
 	}

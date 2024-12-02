@@ -8,28 +8,36 @@ import {
 	Delete,
 	Request,
 	UseGuards,
+	Query,
 } from "@nestjs/common";
-import { UsersService } from "../services/users.service";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { UpdateUserDto } from "../dto/update-user.dto";
 import { getUserSerializer } from "../entities/user.serializer";
-import { AuthOldGuard } from "../../auth/guards/auth.guard";
 import { RoleGuard } from "../../roles/guards/role.guard";
 import { ROLE_ADMIN, ROLE_USER } from "../../roles/dto/role.dto";
 import { AccessTokenGuard } from "src/modules/auth/guards/accessToken.guard";
 import { formatResponse } from "src/utils/response";
-import * as express from "express";
-import { getQuery } from "src/utils/request";
+import { FindAllUserUseCase } from "../use-cases/find-all-users.use-case";
+import { BaseQuery } from "src/base/data";
+import { CreateUserUseCase } from "../use-cases/create-user.use-case";
+import { UpdateUserUseCase } from "../use-cases/update-user.use-case";
+import { DeleteUserUseCase } from "../use-cases/delete-user.use-case";
+import { FindUserByIdUseCase } from "../use-cases/find-user-by-id.use-case";
 
 @Controller("users")
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(
+		private readonly findAllUserUseCase: FindAllUserUseCase,
+		private readonly createUserUseCase: CreateUserUseCase,
+		private readonly updateUserUseCase: UpdateUserUseCase,
+		private readonly deleteUserUseCase: DeleteUserUseCase,
+		private readonly findByIdUserUseCase: FindUserByIdUseCase) {}
 
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) {
 		return formatResponse({
 			message: "Success Create User",
-			data: getUserSerializer(await this.usersService.create(createUserDto)),
+			data: getUserSerializer(await this.createUserUseCase.execute(createUserDto)),
 		});
 	}
 
@@ -52,18 +60,13 @@ export class UsersController {
 	}
 
 	@Get()
-	async findAll(@Request() request: express.Request) {
-		const query = request.query;
-		console.log(query);
-		const paginageList = await this.usersService.findByQuery(getQuery(request));
+	async findAll(@Query() query: BaseQuery) {
+		
+		const users = await this.findAllUserUseCase.execute(query);
 
 		return formatResponse({
 			message: "Success Retrieve",
-			data: {
-				...paginageList,
-				data: paginageList.data.map((e) => getUserSerializer(e)),
-			},
-			extractData: true,
+			data: users.map((user) => getUserSerializer(user)),
 		});
 	}
 
@@ -71,7 +74,7 @@ export class UsersController {
 	async findOne(@Param("id") id: string) {
 		return formatResponse({
 			message: "Success Retrieve",
-			data: getUserSerializer(await this.usersService.findOne(id)),
+			data: getUserSerializer(await this.findByIdUserUseCase.execute(id)),
 		});
 	}
 
@@ -79,7 +82,7 @@ export class UsersController {
 	async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
 		return formatResponse({
 			data: getUserSerializer(
-				await this.usersService.update(id, updateUserDto),
+				await this.updateUserUseCase.execute(id, updateUserDto),
 			),
 		});
 	}
@@ -87,7 +90,7 @@ export class UsersController {
 	@Delete(":id")
 	async remove(@Param("id") id: string) {
 		return formatResponse({
-			data: getUserSerializer(await this.usersService.remove(id)),
+			data: getUserSerializer(await this.deleteUserUseCase.execute(id)),
 		});
 	}
 }
