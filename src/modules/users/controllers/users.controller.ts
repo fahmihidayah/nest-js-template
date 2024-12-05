@@ -18,7 +18,7 @@ import { ROLE_ADMIN, ROLE_USER } from "../../roles/dto/role.dto";
 import { AccessTokenGuard } from "src/modules/auth/guards/accessToken.guard";
 import { formatResponse } from "src/utils/response";
 import { FindAllUserUseCase } from "../use-cases/find-all-users.use-case";
-import { BaseQuery } from "src/base/data";
+import { BaseQuery } from "src/utils/query/data";
 import { CreateUserUseCase } from "../use-cases/create-user.use-case";
 import { UpdateUserUseCase } from "../use-cases/update-user.use-case";
 import { DeleteUserUseCase } from "../use-cases/delete-user.use-case";
@@ -31,13 +31,16 @@ export class UsersController {
 		private readonly createUserUseCase: CreateUserUseCase,
 		private readonly updateUserUseCase: UpdateUserUseCase,
 		private readonly deleteUserUseCase: DeleteUserUseCase,
-		private readonly findByIdUserUseCase: FindUserByIdUseCase) {}
+		private readonly findByIdUserUseCase: FindUserByIdUseCase,
+	) {}
 
 	@Post()
 	async create(@Body() createUserDto: CreateUserDto) {
 		return formatResponse({
 			message: "Success Create User",
-			data: getUserSerializer(await this.createUserUseCase.execute(createUserDto)),
+			data: getUserSerializer(
+				await this.createUserUseCase.execute(createUserDto),
+			),
 		});
 	}
 
@@ -61,7 +64,6 @@ export class UsersController {
 
 	@Get()
 	async findAll(@Query() query: BaseQuery) {
-		
 		const users = await this.findAllUserUseCase.execute(query);
 
 		return formatResponse({

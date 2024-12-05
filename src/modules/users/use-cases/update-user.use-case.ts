@@ -5,15 +5,15 @@ import { UserService } from "../services/user.service";
 
 @Injectable()
 export class UpdateUserUseCase {
-    constructor(private readonly userRepository: UserService) {}
+	constructor(private readonly userRepository: UserService) {}
 
-    async execute(id: string, data: UpdateUserDto): Promise<UserWithRoles> {
-        const user = await this.userRepository.findById(id);
+	async execute(id: string, data: UpdateUserDto): Promise<UserWithRoles> {
+		const user = await this.userRepository.findById(id);
 
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
+		if (!user) {
+			throw new NotFoundException("User not found");
+		}
 
-        return this.userRepository.update(id, data);
-    }
+		return this.userRepository.update(id, data);
+	}
 }

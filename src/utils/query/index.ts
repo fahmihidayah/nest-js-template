@@ -1,38 +1,38 @@
-import { BaseQuery } from "src/base/data";
+import { BaseQuery } from "src/utils/query/data";
 
 export function getQuery<Q extends BaseQuery>(query: Q) {
-    const where = query.fields?.split(",")?.map((field) => {
-        return {
-            [field]: {
-                contains: query.keyword,
-            },
-        }
-    });
-    return where;
+	const where = query.fields?.split(",")?.map((field) => {
+		return {
+			[field]: {
+				contains: query.keyword,
+			},
+		};
+	});
+	return where;
 }
 
 export function getFindManyArgs<Q extends BaseQuery>(query: Q) {
-    const where = this.getQuery(query);
+	const where = getQuery(query);
 
-    const whereInput = {
-        OR: where,
-    }
+	const whereInput = {
+		OR: where,
+	};
 
-    const take = query.pageSize || 10;
-    const skip = query.page ? (query.page - 1) * take : 0;
+	const take = query.pageSize || 10;
+	const skip = query.page ? (query.page - 1) * take : 0;
 
-    const findManyArgs  = {
-        where: whereInput ,
-        take: +take,
-        skip: +skip,
+	const findManyArgs = {
+		where: whereInput,
+		take: +take,
+		skip: +skip,
 
-        include: {
-            roles: true,
-        },
-        orderBy: {
-            [query.orderColumn] : query.orderBy,
-        }
-    };
+		include: {
+			roles: true,
+		},
+		orderBy: {
+			[query.orderColumn]: query.orderBy,
+		},
+	};
 
-    return findManyArgs;
+	return findManyArgs;
 }

@@ -11,11 +11,17 @@ import { CountUserUseCase } from "./use-cases/count-user.use-case";
 
 @Module({
 	controllers: [UsersController],
-	providers: [UserService,
+	providers: [
+		UserService,
 		UserService,
 		FindAllUserUseCase,
 		FindUsersWithPaginateUseCase,
-		CountUserUseCase, CreateUserUseCase, UpdateUserUseCase, FindUserByIdUseCase, DeleteUserUseCase],
+		CountUserUseCase,
+		CreateUserUseCase,
+		UpdateUserUseCase,
+		FindUserByIdUseCase,
+		DeleteUserUseCase,
+	],
 	exports: [UserService],
 })
-export class UsersModule { }
+export class UsersModule {}

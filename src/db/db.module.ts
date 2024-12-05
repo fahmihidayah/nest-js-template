@@ -13,7 +13,6 @@ export class DatabaseModule {
 
 			providers: [
 				{
-					
 					provide: PrismaClient,
 					useValue: prisma,
 				},

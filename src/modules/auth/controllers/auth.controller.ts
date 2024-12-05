@@ -8,25 +8,27 @@ import {
 	UseGuards,
 } from "@nestjs/common";
 import { AuthFormDto } from "../dto/auth.dto";
-import { AuthService } from "../services/auth.service";
 import { RegisterFormDto } from "../dto/register.dto";
 import { ROLE_USER } from "../../roles/dto/role.dto";
 import { AccessTokenGuard } from "../guards/accessToken.guard";
 import { getUserSerializer } from "src/modules/users/entities/user.serializer";
 import { formatResponse } from "src/utils/response";
 import { RefreshTokenDto } from "../dto/token.dto";
+import { SignInUseCase } from "../use-cases/sign-in.use-case";
+import { SignUpUseCase } from "../use-cases/sign-up.use-case";
+import { RefreshTokenUseCase } from "../use-cases/refresh-token.use-case";
 
 @Controller("auth")
 export class AuthController {
-	constructor(public _authService: AuthService) {}
+	constructor(
+		private readonly signInUseCase: SignInUseCase,
+		private readonly signUpUseCase: SignUpUseCase,
+		private readonly refreshTokenUseCase: RefreshTokenUseCase,
+	) {}
 
 	@Post("sign-in")
 	async signUp(@Body() authFormDto: AuthFormDto) {
-		console.log(authFormDto.email, authFormDto.password);
-		if (!authFormDto.email) {
-			throw new Error("Email and password is required");
-		}
-		const response = await this._authService.signUp(authFormDto);
+		const response = this.signInUseCase.execute(authFormDto);
 		return formatResponse({
 			message: "Success Login",
 			data: response,
@@ -35,7 +37,7 @@ export class AuthController {
 
 	@Post("refresh-token")
 	async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-		const token = await this._authService.refreshToken(refreshTokenDto);
+		const token = await this.refreshTokenUseCase.execute(refreshTokenDto);
 		return formatResponse({
 			message: "Success refresh token",
 			data: token,
@@ -52,11 +54,8 @@ export class AuthController {
 	}
 
 	@Post("register")
-	async register(@Body() registerFormDto: RegisterFormDto) {
-		const response = await this._authService.register(
-			registerFormDto,
-			ROLE_USER,
-		);
+	async register(@Body() form: RegisterFormDto) {
+		const response = this.signUpUseCase.execute(form, ROLE_USER);
 		return formatResponse({
 			message: "Success Login",
 			data: response,

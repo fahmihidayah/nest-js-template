@@ -3,11 +3,9 @@ import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { RolesModule } from "./modules/roles/roles.module";
 import { ConfigModule } from "@nestjs/config";
-import { Prisma, PrismaClient } from "@prisma/client";
 import { DatabaseModule } from "./db/db.module";
 import { JwtModule } from "@nestjs/jwt";
 import { jwtConstants } from "./modules/auth/constants";
-import { APP_PIPE } from "@nestjs/core";
 
 @Module({
 	imports: [
